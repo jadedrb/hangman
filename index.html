@@ -6,14 +6,29 @@
     </head>
     <body>
         <h1>HANGMAN</h1>
+        <div id='current-letter'></div>
 
         <section>
             <h2>Game</h2>
             <div id='game-area'>
                 <div id='failed-letters'></div>
-                <div id='hanged-man'>:-(</div>
+                <div id='hanged-man'>
+                    <div id='scaffold'>
+                        <div id="base"></div>
+                        <div id="tower"></div>
+                        <div id="tower-arm"></div>
+                        <div id="rope"></div>
+                    </div>
+                    <div id='stick-figure'>
+                        <div id='stick-head'></div>
+                        <div id='stick-body'></div>
+                        <div id='stick-left-leg'></div>
+                        <div id='stick-right-leg'></div>
+                        <div id='stick-left-arm'></div>
+                        <div id='stick-right-arm'></div>
+                    </div>
+                </div>
                 <div id='hidden-letters'></div>
-                <div id='current-letter'></div>
             </div>
         </section>
 

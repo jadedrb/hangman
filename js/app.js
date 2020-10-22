@@ -19,19 +19,30 @@ document.onkeypress = e => {
     if (!settings.gameState || settings.usedLetters.hasOwnProperty(key.toUpperCase())) return
 
     if (letter(key)) {
+        // Print tentative letter choice to DOM
         letterDiv.innerText = key.toUpperCase()
+
         // Make sure they typed a letter before pressing Enter
     } else if (letterDiv.innerText && key === 'Enter') {
        let [passedCheck, letterLocations] = checkLetters()
        settings.usedLetters[letterDiv.innerText] = letterDiv.innerText
        settings.revealedLetters += letterLocations.length
-       letterDiv.innerText = ' '
 
+       // Print incorrect letter choice to DOM
+       if (!passedCheck) {
+           let incorrectLetters = document.getElementById('failed-letters')
+           let span = createElementWithIdAndClass('span', 'inc')
+           span.innerText = letterDiv.innerText
+           incorrectLetters.appendChild(span)
+       }
+
+       // Reveal letters if correct
        letterLocations.forEach(position => {
            let revealedLetter = document.getElementById(`l-${position}`)
            revealedLetter.innerText = settings.word[position]
-
        })
+
+       letterDiv.innerText = ' '
 
        if (checkGameOver()) alert('done')
     }
@@ -52,6 +63,9 @@ const createElementWithIdAndClass = (type, clas, id) => {
 
 // Player pressed start
 const handleStart = () => {
+
+    if (settings.gameState) return
+
     let value = document.getElementById('secret-word').value
     document.getElementById('cover-settings').style.display = 'block';
     setSettings(value, 'word')
@@ -62,6 +76,7 @@ const handleStart = () => {
     // build hidden letter divs in DOM
     let div = createElementWithIdAndClass('div', 'word')
 
+    alert('creating divs') 
     for (let i = 0; i < settings.word.length; i++) {
         if (settings.word[i] !== ' ') {
             let span = createElementWithIdAndClass('span', 'letter', `l-${i}`)

@@ -1,10 +1,11 @@
 body {
-    background-color: aqua;
+    background-color: seashell;
 }
 
 #hidden-letters {
     display: flex;
-    flex-direction: row;
+    border: 1px solid blue;
+    max-width: inherit;
 }
 
 .word {
@@ -13,7 +14,7 @@ body {
 
 .letter {
     border-bottom: 5px solid black;
-    color: white;
+    color: rgb(71, 44, 24);
     font-size: 20pt;
     padding: 5px;
     margin: 5px;
@@ -22,8 +23,155 @@ body {
 #cover-settings {
     position: absolute;
     display: none;
-    background-color: aqua;
+    background-color: seashell;
     opacity: 90%;
     width: 100%;
     height: 500px;
+}
+
+#game-area {
+    display: flex;
+    border-radius: 10px;
+    background-color: rgb(216, 216, 216);
+}
+
+#failed-letters {
+    display: flex;
+    flex-direction: column;
+    font-size: 20pt;
+    font-weight: bold;
+    width: 50px;
+    justify-content: center;
+    align-items: center;
+}
+
+#failed-letters span {
+    text-decoration: line-through;
+}
+
+#current-letter {
+    position: absolute;
+    font-size: 50pt;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+}
+
+#hanged-man { 
+    display: flex;
+    padding: 50px;
+}
+
+#scaffold {
+    position: relative;
+    width: 30px;
+    height: 200px;
+}
+
+#base {
+    position: absolute;
+    bottom: 0;
+    width: 30px;
+    height: 10px;
+    background-color: black;
+}
+
+#tower {
+    position: absolute;
+    right: 10px;
+    width: 10px;
+    height: 200px;
+    background-color: black;
+}
+
+#tower-arm {
+    position: absolute;
+    left: 10px;
+    width: 70px;
+    height: 10px;
+    background-color: black;
+}
+
+#rope {
+    position: absolute;
+    left: 70px;
+    width: 4px;
+    height: 50px;
+    background-color: brown;
+}
+
+#stick-figure {
+    position: relative;
+    justify-self: center;
+    width: 30px;
+    height: 100px;
+    padding: 20px;
+    margin-top: 30px;
+    margin-left: 10px;
+}
+
+#stick-head {
+    position: absolute;
+    left: 18px;
+    top: 8px;
+    height: 25px;
+    width: 25px;
+    background-color: black;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+#stick-body {
+    position: absolute;
+    top: 30px;
+    left: 25px;
+    height: 50px;
+    width: 10px;
+    background-color: black;
+    border-radius: 10px;
+}
+
+#stick-left-leg {
+    position: absolute;
+    top: 70px;
+    left: 15px;
+    height: 50px;
+    width: 8px;
+    background-color: brown;
+    border-radius: 10px;
+    transform: rotate(25deg)
+}
+
+#stick-left-arm {
+    position: absolute;
+    top: 40px;
+    left: 15px;
+    height: 40px;
+    width: 8px;
+    background-color: rgb(124, 77, 77);
+    border-radius: 10px;
+    transform: rotate(25deg)
+}
+
+#stick-right-leg {
+    position: absolute;
+    top: 70px;
+    left: 40px;
+    height: 50px;
+    width: 8px;
+    background-color: rgb(42, 165, 97);
+    border-radius: 10px;
+    transform: rotate(-25deg)
+}
+
+#stick-right-arm {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    height: 40px;
+    width: 8px;
+    background-color: rgb(22, 149, 143);
+    border-radius: 10px;
+    transform: rotate(-25deg)
 }
