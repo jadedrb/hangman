@@ -1,5 +1,11 @@
 body {
+    font-family: 'Turret Road', cursive;
     background-color: seashell;
+}
+h1 {
+    font-weight: bolder;
+    letter-spacing: 15px;
+    text-shadow: 2px 2px #5c5c5c;
 }
 
 #hidden-letters {

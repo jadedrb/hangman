@@ -31,12 +31,13 @@ class Settings {
         let laLeft = 15;
         let heTop = 8;
         let heLeft = 18;
-        return [rlRotate, rlLeft, raRotate, raLeft, llRotate, llLeft, laRotate, laLeft, heTop, heLeft]
+        let boTop = 30;
+        return [rlRotate, rlLeft, raRotate, raLeft, llRotate, llLeft, laRotate, laLeft, heTop, heLeft, boTop]
     }
 
     stickFigureResetStyleValues() {
-        let [rlDiv, llDiv, raDiv, laDiv, heDiv] = this.stickFigureLimbsInAnArray()
-        let [rlRotate, rlLeft, raRotate, raLeft, llRotate, llLeft, laRotate, laLeft, heTop, heLeft] = this.stickFigureInitialStyleValuesInAnArray()
+        let [rlDiv, llDiv, raDiv, laDiv, heDiv, boDiv] = this.stickFigureLimbsInAnArray()
+        let [rlRotate, rlLeft, raRotate, raLeft, llRotate, llLeft, laRotate, laLeft, heTop, heLeft, boTop] = this.stickFigureInitialStyleValuesInAnArray()
    
         rlDiv.style.transform = `rotate(${rlRotate}deg)`; 
         rlDiv.style.left = `${rlLeft}px`;
@@ -52,6 +53,13 @@ class Settings {
    
         heDiv.style.top = `${heTop}px`; 
         heDiv.style.left = `${heLeft}px`;
+
+        rlDiv.style.top = '70px'
+        llDiv.style.top = '70px'
+        raDiv.style.top = '40px'
+        laDiv.style.top = '40px'
+        heDiv.style.top = '8px'
+        boDiv.style.top = `${boTop}px`; 
     }
 
     cleanUpDivs() {
@@ -108,7 +116,9 @@ document.onkeypress = e => {
        letterDiv.innerText = ' '
 
        if (checkGameOver()) {
+        settings.gameState = false
         increaseWinsFor('p')
+        animateFreedom()
         setTimeout(() => settings = new Settings(), 3000)
        }
     }
@@ -149,7 +159,6 @@ const revealTheVictim = () => {
 
 const increaseWinsFor = (recipient) => {
     let el = document.getElementById(`${recipient}-win`)
-    console.log(Number(el.innerText))
     let newValue = Number(el.innerText)
     newValue++
     el.innerText = newValue
@@ -310,3 +319,66 @@ const checkLetters = () => {
 
     return [isThisLetterPresent, letterLocations]
 }
+
+
+// jQuery animation portion
+
+const animateFreedom = () => {
+    let vitality = settings.incorrect
+    console.log(vitality)
+    let [rlDiv, llDiv] = settings.stickFigureLimbsInAnArray()
+    let [rlRotate, rlLeft, , , llRotate, llLeft] = settings.stickFigureInitialStyleValuesInAnArray()
+    llDiv = document.getElementById('stick-left-leg')
+    rlDiv = document.getElementById('stick-right-leg')
+
+    switch(vitality) {
+        case 2:
+            $("#stick-head").animate({ top: '150px'}, 600)
+            break;
+        default:
+            $("#stick-head").animate({ top: '100px'}, 600)
+            $("#stick-body").animate({ top: '110px'}, 700)
+            $("#stick-right-arm").animate({ top: '110px'}, 700)
+            $("#stick-left-arm").animate({ top: '110px'}, 700)
+            $("#stick-right-leg").animate({ top: '150px'}, 700)
+            $("#stick-left-leg").animate({ top: '150px'}, 700)
+
+            $("#stick-head").animate({ top: '90px'}, 700)
+            $("#stick-right-arm").animate({ top: '120px'}, 700)
+            $("#stick-left-arm").animate({ top: '120px'}, 700)
+
+  
+            break;
+    }
+}
+
+
+// Computer random word generator
+
+// https://stackoverflow.com/questions/26622708/how-to-get-random-word-using-wordnik-api-in-javascript
+
+/*
+fetch('https://random-word-api.herokuapp.com/all')
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
+      })
+*/
+
+
+
+/*
+          let interval = setInterval(() => {
+                let clearThis = 0
+                llRotate > 5 ? llRotate-- : clearThis++
+                rlRotate < -5 ? rlRotate++ : clearThis++
+                llLeft < 22 ? llLeft++ : clearThis++
+                rlLeft > 60 ? rlLeft-- : clearThis++
+                llDiv.style.transform = `rotate(${llRotate}deg)`
+                llDiv.style.left = `${llLeft}%`
+                rlDiv.style.transform = `rotate(${rlRotate}deg)`
+                rlDiv.style.left = `${rlLeft}%`
+                console.log('another inetval')
+                if (clearThis >= 4) clearInterval(interval)
+            }, 100)
+*/
