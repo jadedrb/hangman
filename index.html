@@ -17,9 +17,10 @@
             </div>
         </section>
 
+        <div id='cover-settings'></div>
         <section>
             <h2>Settings</h1>
-            <form>
+            <form onsubmit="event.preventDefault(); handleStart();">
                 <fieldset>
                     <legend>Opponent</legend>
                     <label for="computer">Computer</label>
@@ -30,11 +31,11 @@
                 </fieldset><br><br>
 
                 <fieldset>
-                    <legend>Word or Sentence</legend>
+                    <label for="secret-word"><legend>Word or Sentence</legend></label>
                     <input id="secret-word" type="password">
                 </fieldset><br><br>
 
-                <button type="button" onclick="handleStart()">Start</button>
+                <button>Start</button>
             </form>
         </section>
 

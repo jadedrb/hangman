@@ -4,6 +4,7 @@ class Settings {
         this.word = ''
         this.gameState = false
         this.usedLetters = {}
+        this.revealedLetters = 0
     }
 }
 
@@ -16,17 +17,23 @@ document.onkeypress = e => {
 
     // Exit function if game hasn't started or if letter was already tried
     if (!settings.gameState || settings.usedLetters.hasOwnProperty(key.toUpperCase())) return
- 
+
     if (letter(key)) {
         letterDiv.innerText = key.toUpperCase()
         // Make sure they typed a letter before pressing Enter
     } else if (letterDiv.innerText && key === 'Enter') {
        let [passedCheck, letterLocations] = checkLetters()
        settings.usedLetters[letterDiv.innerText] = letterDiv.innerText
-       letterDiv.innerText = ''
-       console.log(settings.usedLetters)
-       console.log(passedCheck)
-       console.log(letterLocations)
+       settings.revealedLetters += letterLocations.length
+       letterDiv.innerText = ' '
+
+       letterLocations.forEach(position => {
+           let revealedLetter = document.getElementById(`l-${position}`)
+           revealedLetter.innerText = settings.word[position]
+
+       })
+
+       if (checkGameOver()) alert('done')
     }
 }
 
@@ -34,6 +41,7 @@ document.onkeypress = e => {
 const setSettings = (value, property) => settings[property] = value
 const letter = ch => /[a-z]/.test(ch) && ch.length === 1
 const compareLetters = (l1, l2) => l1.toLowerCase() === l2.toLowerCase()
+const checkGameOver = () => settings.revealedLetters === settings.word.split(' ').join('').length
 
 const createElementWithIdAndClass = (type, clas, id) => {
     let el = document.createElement(type)
@@ -45,6 +53,7 @@ const createElementWithIdAndClass = (type, clas, id) => {
 // Player pressed start
 const handleStart = () => {
     let value = document.getElementById('secret-word').value
+    document.getElementById('cover-settings').style.display = 'block';
     setSettings(value, 'word')
     setSettings(true, 'gameState')
 
@@ -55,7 +64,7 @@ const handleStart = () => {
 
     for (let i = 0; i < settings.word.length; i++) {
         if (settings.word[i] !== ' ') {
-            let span = createElementWithIdAndClass('span', 'letter', i)
+            let span = createElementWithIdAndClass('span', 'letter', `l-${i}`)
             div.appendChild(span)
         } else {
             hiddenLetters.appendChild(div)
@@ -79,24 +88,6 @@ const checkLetters = () => {
             letterLocations.push(i)
         }
     })
-    
-    /*
-    let words = settings.word.split(' ')
-    let wordBank = {}
-    let isThisLetterPresent = false
-
-    words.forEach((currentWord, index) => {
-        wordBank[index] = []
-        let lettersInWord = currentWord.split('')
-
-        lettersInWord.forEach((l,i) => {
-            if (compareLetters(currentLetter, l)) {
-                isThisLetterPresent = true
-                wordBank[index].push(i)
-            }
-        })
-    })
-    */
 
     return [isThisLetterPresent, letterLocations]
 }
