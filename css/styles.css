@@ -1,3 +1,12 @@
 body {
     background-color: aqua;
 }
+
+.letter {
+    width: 100px;
+    height: 50px;
+    border-bottom: 1px solid black;
+    color: red;
+    padding: 5px;
+    margin: 5px;
+}
