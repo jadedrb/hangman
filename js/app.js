@@ -4,7 +4,17 @@ class Settings {
         this.word = ''
         this.gameState = false
         this.usedLetters = {}
+        this.incorrect = 0
         this.revealedLetters = 0
+        this.cleanUpDivs()
+    }
+
+    cleanUpDivs() {
+        let bodyParts = ['rope','stick-head', 'stick-body','stick-right-arm','stick-right-leg','stick-left-arm','stick-left-leg','cover-settings'] 
+        let emptyDivs = ['hidden-letters','failed-letters']
+        bodyParts.forEach(part => document.getElementById(part).style.display = 'none')
+        emptyDivs.forEach(div => document.getElementById(div).innerHTML = '')
+        document.getElementById('secret-word').value = ''
     }
 }
 
@@ -33,7 +43,9 @@ document.onkeypress = e => {
            let incorrectLetters = document.getElementById('failed-letters')
            let span = createElementWithIdAndClass('span', 'inc')
            span.innerText = letterDiv.innerText
+           settings.incorrect += 1
            incorrectLetters.appendChild(span)
+           revealTheVictim()
        }
 
        // Reveal letters if correct
@@ -44,15 +56,51 @@ document.onkeypress = e => {
 
        letterDiv.innerText = ' '
 
-       if (checkGameOver()) alert('done')
+       if (checkGameOver()) alert('win')
     }
+}
+
+// Reveal a body part div
+const revealTheVictim = () => {
+    switch (settings.incorrect) {
+        case 1:
+            document.getElementById('rope').style.display = 'block'
+            break;
+        case 2:
+            document.getElementById('stick-head').style.display = 'block'
+            break;
+        case 3:
+            document.getElementById('stick-body').style.display = 'block'
+            break;
+        case 4:
+            document.getElementById('stick-right-arm').style.display = 'block'
+            break;
+        case 5:
+            document.getElementById('stick-left-leg').style.display = 'block'
+            break;
+        case 6: 
+            document.getElementById('stick-left-arm').style.display = 'block'
+            break;
+        case 7:
+            document.getElementById('stick-right-leg').style.display = 'block'
+            break;
+        default:
+            deathToVictim()
+            break;
+    }
+}
+
+const deathToVictim = () => {
+    alert('loss')
+    settings.gameState = false
+    setTimeout(() => settings = new Settings(), 3000)
 }
 
 // Reusable helper functions
 const setSettings = (value, property) => settings[property] = value
 const letter = ch => /[a-z]/.test(ch) && ch.length === 1
 const compareLetters = (l1, l2) => l1.toLowerCase() === l2.toLowerCase()
-const checkGameOver = () => settings.revealedLetters === settings.word.split(' ').join('').length
+const checkGameOver = () => settings.word.length && settings.revealedLetters === settings.word.split(' ').join('').length
 
 const createElementWithIdAndClass = (type, clas, id) => {
     let el = document.createElement(type)
@@ -63,10 +111,12 @@ const createElementWithIdAndClass = (type, clas, id) => {
 
 // Player pressed start
 const handleStart = () => {
-
+ 
     if (settings.gameState) return
 
-    let value = document.getElementById('secret-word').value
+    let secretWord = document.getElementById('secret-word')
+    let value = secretWord.value
+    secretWord.blur()
     document.getElementById('cover-settings').style.display = 'block';
     setSettings(value, 'word')
     setSettings(true, 'gameState')
@@ -76,7 +126,6 @@ const handleStart = () => {
     // build hidden letter divs in DOM
     let div = createElementWithIdAndClass('div', 'word')
 
-    alert('creating divs') 
     for (let i = 0; i < settings.word.length; i++) {
         if (settings.word[i] !== ' ') {
             let span = createElementWithIdAndClass('span', 'letter', `l-${i}`)
