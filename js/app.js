@@ -9,12 +9,56 @@ class Settings {
         this.cleanUpDivs()
     }
 
+    stickFigureLimbsInAnArray() {
+        let rlDiv = document.getElementById('stick-right-leg')
+        let llDiv = document.getElementById('stick-left-leg')
+        let raDiv = document.getElementById('stick-right-arm')
+        let laDiv = document.getElementById('stick-left-arm')
+        let heDiv = document.getElementById('stick-head')
+        let boDiv = document.getElementById('stick-body')
+        let roDiv = document.getElementById('rope')
+        return [rlDiv, llDiv, raDiv, laDiv, heDiv, boDiv, roDiv]
+    }
+    
+    stickFigureInitialStyleValuesInAnArray() {
+        let rlRotate = -25
+        let rlLeft = 38;
+        let raRotate = -25;
+        let raLeft = 38;
+        let llRotate = 25;
+        let llLeft = 15;
+        let laRotate = 25;
+        let laLeft = 15;
+        let heTop = 8;
+        let heLeft = 18;
+        return [rlRotate, rlLeft, raRotate, raLeft, llRotate, llLeft, laRotate, laLeft, heTop, heLeft]
+    }
+
+    stickFigureResetStyleValues() {
+        let [rlDiv, llDiv, raDiv, laDiv, heDiv] = this.stickFigureLimbsInAnArray()
+        let [rlRotate, rlLeft, raRotate, raLeft, llRotate, llLeft, laRotate, laLeft, heTop, heLeft] = this.stickFigureInitialStyleValuesInAnArray()
+   
+        rlDiv.style.transform = `rotate(${rlRotate}deg)`; 
+        rlDiv.style.left = `${rlLeft}px`;
+ 
+        llDiv.style.transform = `rotate(${llRotate}deg)`; 
+        llDiv.style.left = `${llLeft}px`;
+  
+        raDiv.style.transform = `rotate(${raRotate}deg)`; 
+        raDiv.style.left = `${raLeft}px`;
+ 
+        laDiv.style.transform = `rotate(${laRotate}deg)`; 
+        laDiv.style.left = `${laLeft}px`;
+   
+        heDiv.style.top = `${heTop}px`; 
+        heDiv.style.left = `${heLeft}px`;
+    }
+
     cleanUpDivs() {
-        let bodyParts = ['rope','stick-head', 'stick-body','stick-right-arm','stick-right-leg','stick-left-arm','stick-left-leg','cover-settings'] 
         let emptyDivs = ['hidden-letters','failed-letters']
-        bodyParts.forEach(part => document.getElementById(part).style.display = 'none')
         emptyDivs.forEach(div => document.getElementById(div).innerHTML = '')
         document.getElementById('secret-word').value = ''
+        document.getElementById('cover-settings').style.display = 'none'
     }
 }
 
@@ -24,6 +68,13 @@ let settings = new Settings()
 document.onkeypress = e => {
     let key = e.key || e.keyIdentifier || e.keyCode
     let letterDiv = document.getElementById('current-letter')
+
+    // Alert if non alphanumeric character
+    if (notProperLetter(key)) {
+        let typedWord = document.getElementById('secret-word')
+        typedWord.value = typedWord.value.slice(0, typedWord.value.length - 1)
+        alert('invalid character')
+    }
 
     // Exit function if game hasn't started or if letter was already tried
     if (!settings.gameState || settings.usedLetters.hasOwnProperty(key.toUpperCase())) return
@@ -56,33 +107,39 @@ document.onkeypress = e => {
 
        letterDiv.innerText = ' '
 
-       if (checkGameOver()) alert('win')
+       if (checkGameOver()) {
+        increaseWinsFor('p')
+        setTimeout(() => settings = new Settings(), 3000)
+       }
     }
 }
 
 // Reveal a body part div
 const revealTheVictim = () => {
+
+    let [rlDiv, llDiv, raDiv, laDiv, heDiv, boDiv, roDiv] = settings.stickFigureLimbsInAnArray()
+
     switch (settings.incorrect) {
         case 1:
-            document.getElementById('rope').style.display = 'block'
+            roDiv.style.display = 'block'
             break;
         case 2:
-            document.getElementById('stick-head').style.display = 'block'
+            heDiv.style.display = 'block'
             break;
         case 3:
-            document.getElementById('stick-body').style.display = 'block'
+            boDiv.style.display = 'block'
             break;
         case 4:
-            document.getElementById('stick-right-arm').style.display = 'block'
+            raDiv.style.display = 'block'
             break;
         case 5:
-            document.getElementById('stick-left-leg').style.display = 'block'
+            llDiv.style.display = 'block'
             break;
         case 6: 
-            document.getElementById('stick-left-arm').style.display = 'block'
+            laDiv.style.display = 'block'
             break;
         case 7:
-            document.getElementById('stick-right-leg').style.display = 'block'
+            rlDiv.style.display = 'block'
             break;
         default:
             deathToVictim()
@@ -90,10 +147,102 @@ const revealTheVictim = () => {
     }
 }
 
+const increaseWinsFor = (recipient) => {
+    let el = document.getElementById(`${recipient}-win`)
+    console.log(Number(el.innerText))
+    let newValue = Number(el.innerText)
+    newValue++
+    el.innerText = newValue
+}
+
 const deathToVictim = () => {
-    alert('loss')
+    animateHanging()
+    increaseWinsFor('o')
     settings.gameState = false
     setTimeout(() => settings = new Settings(), 3000)
+}
+
+const animateHanging = () => {
+    
+    let [rlRotate, rlLeft, raRotate, raLeft, llRotate, llLeft, laRotate, laLeft, heTop, heLeft] = settings.stickFigureInitialStyleValuesInAnArray()
+    let [rlDiv, llDiv, raDiv, laDiv, heDiv] = settings.stickFigureLimbsInAnArray()
+
+    let interval = setInterval(() => {
+        let clearThisInterval = true
+        // right leg
+        if (rlRotate < -5) {
+            clearThisInterval = false
+            rlRotate++
+            rlDiv.style.transform = `rotate(${rlRotate}deg)`;
+        }
+        if (rlLeft > 30) {
+            clearThisInterval = false
+            rlLeft--
+            rlDiv.style.left = `${rlLeft}px`
+        }
+        // left leg
+        if (llRotate > 5) {
+            clearThisInterval = false
+            llRotate--
+            llDiv.style.transform = `rotate(${llRotate}deg)`;
+        }
+        if (llLeft < 22) {
+            clearThisInterval = false
+            llLeft++
+            llDiv.style.left = `${llLeft}px`
+        }
+        // right arm
+        if (raRotate < -5) {
+            clearThisInterval = false
+            raRotate++
+            raDiv.style.transform = `rotate(${raRotate}deg)`;
+        }
+        if (raLeft > 30) {
+            clearThisInterval = false
+            raLeft--
+            raDiv.style.left = `${raLeft}px`
+        }
+        // left arm
+        if (laRotate > 5) {
+            clearThisInterval = false
+            laRotate--
+            laDiv.style.transform = `rotate(${laRotate}deg)`;
+        }
+        if (laLeft < 22) {
+            clearThisInterval = false
+            laLeft++
+            laDiv.style.left = `${laLeft}px`
+        }
+        // head 
+        if (heTop < 15) {
+            clearThisInterval = false
+            heTop++
+            heDiv.style.top = `${heTop}px`
+        }
+        if (heLeft < 25) {
+            clearThisInterval = false
+            heLeft++
+            heDiv.style.left = `${heLeft}px`
+        }
+        // clear animation interval
+        if (clearThisInterval) {
+            clearInterval(interval)
+            setTimeout(() => animateDissappearance(), 500)
+        }        
+    }, 10)
+}
+
+const animateDissappearance = () => {
+    let divArr = settings.stickFigureLimbsInAnArray()
+
+    let opacity = 100;
+
+    let interval = setInterval(() => {
+        let { gameState } = settings
+        opacity--
+        if (!gameState) divArr.forEach(div => div.style.opacity = `${opacity}%`)
+        if (!opacity || gameState) clearInterval(interval)
+    }, 100)
 }
 
 // Reusable helper functions
@@ -101,6 +250,7 @@ const setSettings = (value, property) => settings[property] = value
 const letter = ch => /[a-z]/.test(ch) && ch.length === 1
 const compareLetters = (l1, l2) => l1.toLowerCase() === l2.toLowerCase()
 const checkGameOver = () => settings.word.length && settings.revealedLetters === settings.word.split(' ').join('').length
+const notProperLetter = ch => !settings.gameState && !letter(ch) && ch !== 'Enter' && ch !== ' '
 
 const createElementWithIdAndClass = (type, clas, id) => {
     let el = document.createElement(type)
@@ -114,12 +264,17 @@ const handleStart = () => {
  
     if (settings.gameState) return
 
+    // Game settings initialization
     let secretWord = document.getElementById('secret-word')
     let value = secretWord.value
-    secretWord.blur()
-    document.getElementById('cover-settings').style.display = 'block';
     setSettings(value, 'word')
     setSettings(true, 'gameState')
+    let divArr = settings.stickFigureLimbsInAnArray()
+    divArr.forEach(div => div.style.display = 'none')
+    divArr.forEach(div => div.style.opacity = '100%')
+    settings.stickFigureResetStyleValues()
+    secretWord.blur()
+    document.getElementById('cover-settings').style.display = 'block';
 
     let hiddenLetters = document.getElementById('hidden-letters')
 
