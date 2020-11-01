@@ -6,6 +6,7 @@ class Settings {
         this.usedLetters = {}
         this.incorrect = 0
         this.revealedLetters = 0
+        this.hold = false
         this.cleanUpDivs()
     }
 
@@ -116,10 +117,15 @@ document.onkeypress = e => {
        letterDiv.innerText = ' '
 
        if (checkGameOver()) {
-        settings.gameState = false
+        //settings.gameState = false
         increaseWinsFor('p')
         animateFreedom()
-        setTimeout(() => settings = new Settings(), 3000)
+        setTimeout(() => {
+            document.getElementById('computer').checked = false
+            document.getElementById('human').checked = false
+            settings.gameState = false
+            settings = new Settings(), 3000
+        })
        }
     }
 }
@@ -168,7 +174,12 @@ const deathToVictim = () => {
     animateHanging()
     increaseWinsFor('o')
     settings.gameState = false
-    setTimeout(() => settings = new Settings(), 3000)
+    settings.hold = true
+    setTimeout(() => {
+        document.getElementById('computer').checked = false
+        document.getElementById('human').checked = false
+        settings = new Settings()
+    }, 3000)
 }
 
 const animateHanging = () => {
@@ -268,39 +279,59 @@ const createElementWithIdAndClass = (type, clas, id) => {
     return el
 }
 
+const computerWord = () => {
+    let cors = 'https://cors-anywhere.herokuapp.com/'
+    let api = 'https://random-words-api.herokuapp.com/w?n=1'
+    return fetch(cors + api)
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
+        console.log('done')
+        return data[0]
+      })
+      .catch(err => console.log(err))
+}
+
 // Player pressed start
-const handleStart = () => {
+const handleStart = async () => {
  
-    if (settings.gameState) return
+
+    if (settings.gameState || settings.hold) return
 
     // Game settings initialization
     let secretWord = document.getElementById('secret-word')
     let value = secretWord.value
-    setSettings(value, 'word')
-    setSettings(true, 'gameState')
-    let divArr = settings.stickFigureLimbsInAnArray()
-    divArr.forEach(div => div.style.display = 'none')
-    divArr.forEach(div => div.style.opacity = '100%')
-    settings.stickFigureResetStyleValues()
-    secretWord.blur()
-    document.getElementById('cover-settings').style.display = 'block';
 
-    let hiddenLetters = document.getElementById('hidden-letters')
+    try {
+        // Player chose computer, so give them a word
+        if (settings.opponent === 'computer') value = await computerWord()
 
-    // build hidden letter divs in DOM
-    let div = createElementWithIdAndClass('div', 'word')
+        setSettings(value, 'word')
+        setSettings(true, 'gameState')
+        let divArr = settings.stickFigureLimbsInAnArray()
+        divArr.forEach(div => div.style.display = 'none')
+        divArr.forEach(div => div.style.opacity = '100%')
+        settings.stickFigureResetStyleValues()
+        secretWord.blur()
+        document.getElementById('cover-settings').style.display = 'block';
 
-    for (let i = 0; i < settings.word.length; i++) {
-        if (settings.word[i] !== ' ') {
-            let span = createElementWithIdAndClass('span', 'letter', `l-${i}`)
-            div.appendChild(span)
-        } else {
-            hiddenLetters.appendChild(div)
-            div = createElementWithIdAndClass('div', 'word')
+        let hiddenLetters = document.getElementById('hidden-letters')
+
+        // build hidden letter divs in DOM
+        let div = createElementWithIdAndClass('div', 'word')
+
+        for (let i = 0; i < settings.word.length; i++) {
+            if (settings.word[i] !== ' ') {
+                let span = createElementWithIdAndClass('span', 'letter', `l-${i}`)
+                div.appendChild(span)
+            } else {
+                hiddenLetters.appendChild(div)
+                div = createElementWithIdAndClass('div', 'word')
+            }
+
+            if (i === settings.word.length - 1) hiddenLetters.appendChild(div)
         }
-
-        if (i === settings.word.length - 1) hiddenLetters.appendChild(div)
-    }
+    } catch (err) {}
 }
 
 // Check if letter is present anywhere in word or phrase
@@ -358,7 +389,7 @@ const animateFreedom = () => {
 // https://stackoverflow.com/questions/26622708/how-to-get-random-word-using-wordnik-api-in-javascript
 
 /*
-fetch('https://random-word-api.herokuapp.com/all')
+fetch('https://random-words-api.herokuapp.com/w?n=1')
       .then(response => response.json())
       .then(data => {
         console.log(data)
