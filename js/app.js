@@ -124,8 +124,8 @@ document.onkeypress = e => {
             document.getElementById('computer').checked = false
             document.getElementById('human').checked = false
             settings.gameState = false
-            settings = new Settings(), 3000
-        })
+            settings = new Settings()
+        }, 3000)
        }
     }
 }
@@ -282,7 +282,7 @@ const createElementWithIdAndClass = (type, clas, id) => {
 const computerWord = () => {
     let cors = 'https://cors-anywhere.herokuapp.com/'
     let api = 'https://random-words-api.herokuapp.com/w?n=1'
-    return fetch(cors + api)
+    return fetch(api)
       .then(response => response.json())
       .then(data => {
         console.log(data)
