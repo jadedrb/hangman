@@ -81,8 +81,8 @@ document.onkeypress = e => {
     // Alert if non alphanumeric character
     if (notProperLetter(key)) {
         let typedWord = document.getElementById('secret-word')
-        typedWord.value = typedWord.value.slice(0, typedWord.value.length - 1)
         alert('invalid character')
+        typedWord.value = typedWord.value.slice(0, typedWord.value.length - 1)        
     }
 
     // Exit function if game hasn't started or if letter was already tried
@@ -109,16 +109,14 @@ document.onkeypress = e => {
        }
 
        // Reveal letters if correct
-       letterLocations.forEach(position => {
-           let revealedLetter = document.getElementById(`l-${position}`)
-           revealedLetter.innerText = settings.word[position]
-       })
+       revealLetters(letterLocations)
 
        letterDiv.innerText = ' '
 
        if (checkGameOver()) {
         //settings.gameState = false
         increaseWinsFor('p')
+        turnLettersThisColor(everyLetterLocation(), 'lime')
         animateFreedom()
         setTimeout(() => {
             document.getElementById('computer').checked = false
@@ -128,6 +126,36 @@ document.onkeypress = e => {
         }, 3000)
        }
     }
+}
+
+// Reveal a letter to the DOM 
+const revealLetters = (letterLocations) => {
+    letterLocations.forEach(position => {
+        let revealedLetter = document.getElementById(`l-${position}`)
+        console.log(revealedLetter)
+        revealedLetter.innerText = settings.word[position]
+    })
+}
+
+// To turn letters a certain color
+const turnLettersThisColor = (letterLocations, color) => {
+    letterLocations.forEach(position => {
+        let revealedLetter = document.getElementById(`l-${position}`)
+        revealedLetter.style.color = color
+    })
+}
+
+// Retrieve all letter locations for quick reveal
+const everyLetterLocation = () => {
+    
+    let letterLocations = []
+
+    for (let i = 0; i < settings.word.length; i++) {
+        if (settings.word[i] !== ' ') 
+            letterLocations.push(i)
+    }
+
+    return letterLocations
 }
 
 // Reveal a body part div
@@ -172,6 +200,8 @@ const increaseWinsFor = (recipient) => {
 
 const deathToVictim = () => {
     animateHanging()
+    revealLetters(everyLetterLocation())
+    turnLettersThisColor(everyLetterLocation(), 'red')
     increaseWinsFor('o')
     settings.gameState = false
     settings.hold = true
