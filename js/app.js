@@ -82,7 +82,9 @@ document.onkeypress = e => {
     if (notProperLetter(key)) {
         let typedWord = document.getElementById('secret-word')
         alert('invalid character')
-        typedWord.value = typedWord.value.slice(0, typedWord.value.length - 1)        
+        console.log(typedWord.value)
+        typedWord.value = typedWord.value.slice(0, typedWord.value.length - 1)   
+        console.log(typedWord.value)     
     }
 
     // Exit function if game hasn't started or if letter was already tried
@@ -132,7 +134,6 @@ document.onkeypress = e => {
 const revealLetters = (letterLocations) => {
     letterLocations.forEach(position => {
         let revealedLetter = document.getElementById(`l-${position}`)
-        console.log(revealedLetter)
         revealedLetter.innerText = settings.word[position]
     })
 }
@@ -146,13 +147,22 @@ const turnLettersThisColor = (letterLocations, color) => {
 }
 
 // Retrieve all letter locations for quick reveal
-const everyLetterLocation = () => {
+const everyLetterLocation = (gameState) => {
     
     let letterLocations = []
 
     for (let i = 0; i < settings.word.length; i++) {
-        if (settings.word[i] !== ' ') 
-            letterLocations.push(i)
+        if (settings.word[i] !== ' ') {
+            if (!gameState) {
+                letterLocations.push(i)
+            } else {
+                let letterDiv = document.getElementById(`l-${i}`)
+                if (!letterDiv.innerText) {
+                    letterLocations.push(i)
+                }
+            }
+        }
+            
     }
 
     return letterLocations
@@ -200,8 +210,8 @@ const increaseWinsFor = (recipient) => {
 
 const deathToVictim = () => {
     animateHanging()
+    turnLettersThisColor(everyLetterLocation('loss'), 'red')
     revealLetters(everyLetterLocation())
-    turnLettersThisColor(everyLetterLocation(), 'red')
     increaseWinsFor('o')
     settings.gameState = false
     settings.hold = true
