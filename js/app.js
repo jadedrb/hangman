@@ -319,17 +319,15 @@ const createElementWithIdAndClass = (type, clas, id) => {
     return el
 }
 
-const computerWord = () => {
-    let cors = 'https://cors-anywhere.herokuapp.com/'
-    let api = 'https://random-words-api.herokuapp.com/w?n=1'
-    return fetch(api)
-      .then(response => response.json())
-      .then(data => {
-        console.log(data)
-        console.log('done')
-        return data[0]
-      })
-      .catch(err => console.log(err))
+const computerWord = async () => {
+    let api = 'https://random-word.ryanrk.com/api/en/word/random'
+    try {
+        let response = await fetch(api)
+        let [ word ] = await response.json()
+        return word
+    } catch(e) {
+        console.log('Word API probably stopped working: ' + api, e)
+    }
 }
 
 // Player pressed start
