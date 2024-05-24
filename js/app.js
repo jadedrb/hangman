@@ -433,21 +433,3 @@ fetch('https://random-words-api.herokuapp.com/w?n=1')
         console.log(data)
       })
 */
-
-
-
-/*
-          let interval = setInterval(() => {
-                let clearThis = 0
-                llRotate > 5 ? llRotate-- : clearThis++
-                rlRotate < -5 ? rlRotate++ : clearThis++
-                llLeft < 22 ? llLeft++ : clearThis++
-                rlLeft > 60 ? rlLeft-- : clearThis++
-                llDiv.style.transform = `rotate(${llRotate}deg)`
-                llDiv.style.left = `${llLeft}%`
-                rlDiv.style.transform = `rotate(${rlRotate}deg)`
-                rlDiv.style.left = `${rlLeft}%`
-                console.log('another inetval')
-                if (clearThis >= 4) clearInterval(interval)
-            }, 100)
-*/
