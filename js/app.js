@@ -319,14 +319,29 @@ const createElementWithIdAndClass = (type, clas, id) => {
     return el
 }
 
-const computerWord = async () => {
-    let api = 'https://random-word.ryanrk.com/api/en/word/random'
+const wordApiRequestUrls = [
+ "https://randomapi.dev/api/words?type=noun&count=1",
+ "https://random-word-api.herokuapp.com/word"   
+]
+
+const computerWord = async (api = 0) => {
     try {
-        let response = await fetch(api)
-        let [ word ] = await response.json()
+ 
+        let response = await fetch(wordApiRequestUrls[api])
+        let data = await response.json();
+
+        let word = data.data?.[0]?.word || data[0]
+
         return word
+        
     } catch(e) {
-        console.log('Word API probably stopped working: ' + api, e)
+        console.log('Word API probably stopped working: ' + wordApiRequestUrls[api], e)
+        if (api + 1 < wordApiRequestUrls.length) {
+            console.log('Trying backup:')
+            computerWord(api + 1);
+        } else {
+            console.log('No backups remain.')
+        }
     }
 }
 
